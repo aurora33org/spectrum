@@ -1,16 +1,29 @@
 "use client";
 
 import { useQueryState, parseAsString } from "nuqs";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { generateScale, type PaletteStop } from "@/lib/color-engine";
 
 export function usePalette() {
-  const [hex, setHex] = useQueryState(
+  const [urlHex, setUrlHex] = useQueryState(
     "color",
     parseAsString.withDefault("3B82F6")
   );
 
-  const palette: PaletteStop[] = useMemo(() => generateScale(hex), [hex]);
+  // liveHex drives the palette — updates instantly on every drag event
+  const [liveHex, setLiveHex] = useState(urlHex);
 
-  return { hex, setHex, palette };
+  // Keep liveHex in sync when URL changes externally (history navigation, deep links)
+  useEffect(() => {
+    setLiveHex(urlHex);
+  }, [urlHex]);
+
+  const palette: PaletteStop[] = useMemo(() => generateScale(liveHex), [liveHex]);
+
+  function setHex(val: string) {
+    setLiveHex(val);  // instant preview
+    setUrlHex(val);   // async URL persistence
+  }
+
+  return { hex: liveHex, setHex, palette };
 }

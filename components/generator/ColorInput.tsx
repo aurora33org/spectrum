@@ -27,8 +27,7 @@ export function ColorInput({ hex, onChange }: ColorInputProps) {
       // react-colorful returns #rrggbb
       const bare = color.replace("#", "");
       setInputValue(bare);
-      if (debounceRef.current) clearTimeout(debounceRef.current);
-      debounceRef.current = setTimeout(() => onChange(bare), 150);
+      onChange(bare);  // call immediately — no debounce for picker
     },
     [onChange]
   );
