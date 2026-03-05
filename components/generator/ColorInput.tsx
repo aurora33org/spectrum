@@ -39,20 +39,19 @@ function rgbToHex(r: number, g: number, b: number): string {
     .toUpperCase();
 }
 
-// Convert RGB to HSL
-function rgbToHsl(r: number, g: number, b: number): { h: number; s: number; l: number } {
+// Convert RGB to HSV
+function rgbToHsv(r: number, g: number, b: number): { h: number; s: number; v: number } {
   r /= 255;
   g /= 255;
   b /= 255;
   const max = Math.max(r, g, b);
   const min = Math.min(r, g, b);
-  let h = 0;
-  let s = 0;
-  const l = (max + min) / 2;
+  const v = max;
+  const d = max - min;
+  const s = max === 0 ? 0 : d / max;
 
+  let h = 0;
   if (max !== min) {
-    const d = max - min;
-    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
     switch (max) {
       case r:
         h = ((g - b) / d + (g < b ? 6 : 0)) / 6;
@@ -66,40 +65,47 @@ function rgbToHsl(r: number, g: number, b: number): { h: number; s: number; l: n
     }
   }
 
-  return { h: Math.round(h * 360), s: Math.round(s * 100), l: Math.round(l * 100) };
+  return { h: Math.round(h * 360), s: Math.round(s * 100), v: Math.round(v * 100) };
 }
 
-// Convert HSL to RGB
-function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: number } {
+// Convert HSV to RGB
+function hsvToRgb(h: number, s: number, v: number): { r: number; g: number; b: number } {
   h = h / 360;
   s = s / 100;
-  l = l / 100;
+  v = v / 100;
 
-  let r, g, b;
+  const c = v * s;
+  const x = c * (1 - Math.abs(((h * 6) % 2) - 1));
+  const m = v - c;
 
-  if (s === 0) {
-    r = g = b = l;
+  let r = 0,
+    g = 0,
+    b = 0;
+
+  if (h < 1 / 6) {
+    r = c;
+    g = x;
+  } else if (h < 2 / 6) {
+    r = x;
+    g = c;
+  } else if (h < 3 / 6) {
+    g = c;
+    b = x;
+  } else if (h < 4 / 6) {
+    g = x;
+    b = c;
+  } else if (h < 5 / 6) {
+    r = x;
+    b = c;
   } else {
-    const hue2rgb = (p: number, q: number, t: number) => {
-      if (t < 0) t += 1;
-      if (t > 1) t -= 1;
-      if (t < 1 / 6) return p + (q - p) * 6 * t;
-      if (t < 1 / 2) return q;
-      if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
-      return p;
-    };
-
-    const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
-    const p = 2 * l - q;
-    r = hue2rgb(p, q, h + 1 / 3);
-    g = hue2rgb(p, q, h);
-    b = hue2rgb(p, q, h - 1 / 3);
+    r = c;
+    b = x;
   }
 
   return {
-    r: Math.round(r * 255),
-    g: Math.round(g * 255),
-    b: Math.round(b * 255),
+    r: Math.round((r + m) * 255),
+    g: Math.round((g + m) * 255),
+    b: Math.round((b + m) * 255),
   };
 }
 
@@ -107,17 +113,17 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
   const { isDark } = useDarkMode();
   const [h, setH] = useState(0);
   const [s, setS] = useState(0);
-  const [l, setL] = useState(50);
+  const [v, setV] = useState(100);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
+  const isDraggingRef = useRef(false);
 
-  // Initialize HSL from hex
+  // Initialize HSV from hex
   useEffect(() => {
     const rgb = hexToRgb(hex);
-    const hsl = rgbToHsl(rgb.r, rgb.g, rgb.b);
-    setH(hsl.h);
-    setS(hsl.s);
-    setL(hsl.l);
+    const hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+    setH(hsv.h);
+    setS(hsv.s);
+    setV(hsv.v);
   }, [hex]);
 
   // Draw canvas gradient
@@ -131,16 +137,15 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
     const width = canvas.width;
     const height = canvas.height;
 
-    // Create gradient: left=white, right=pure color
+    // Create horizontal gradient: left=white (S=0), right=pure color (S=100)
     const horizontalGrad = ctx.createLinearGradient(0, 0, width, 0);
     horizontalGrad.addColorStop(0, "white");
     horizontalGrad.addColorStop(1, `hsl(${h}, 100%, 50%)`);
 
-    // Fill horizontal gradient
     ctx.fillStyle = horizontalGrad;
     ctx.fillRect(0, 0, width, height);
 
-    // Create vertical gradient: top=transparent, bottom=black
+    // Create vertical gradient: top=full brightness (V=100), bottom=black (V=0)
     const verticalGrad = ctx.createLinearGradient(0, 0, 0, height);
     verticalGrad.addColorStop(0, "rgba(0, 0, 0, 0)");
     verticalGrad.addColorStop(1, "rgba(0, 0, 0, 1)");
@@ -150,53 +155,98 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
   }, [h]);
 
   const updateColor = useCallback(
-    (newH?: number, newS?: number, newL?: number) => {
+    (newH?: number, newS?: number, newV?: number) => {
       const finalH = newH !== undefined ? newH : h;
       const finalS = newS !== undefined ? newS : s;
-      const finalL = newL !== undefined ? newL : l;
+      const finalV = newV !== undefined ? newV : v;
 
-      const rgb = hslToRgb(finalH, finalS, finalL);
+      const rgb = hsvToRgb(finalH, finalS, finalV);
       const newHex = rgbToHex(rgb.r, rgb.g, rgb.b);
       onChange(newHex);
     },
-    [h, s, l, onChange]
+    [h, s, v, onChange]
   );
 
-  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!canvasRef.current) return;
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = ((e.clientX - rect.left) / rect.width) * 100;
-    const y = ((e.clientY - rect.top) / rect.height) * 100;
-    const newS = Math.max(0, Math.min(100, x));
-    const newL = Math.max(0, Math.min(100, 100 - y));
-    setS(newS);
-    setL(newL);
-    updateColor(h, newS, newL);
-  };
-
-  const handleCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    handleCanvasClick(e);
-
-    const handleMouseMove = (moveEvent: MouseEvent) => {
-      if (!canvasRef.current) return;
-      const rect = canvasRef.current.getBoundingClientRect();
-      const x = ((moveEvent.clientX - rect.left) / rect.width) * 100;
-      const y = ((moveEvent.clientY - rect.top) / rect.height) * 100;
+  const updateFromPosition = useCallback(
+    (x: number, y: number) => {
+      // X maps to saturation: 0% left → 100% right
       const newS = Math.max(0, Math.min(100, x));
-      const newL = Math.max(0, Math.min(100, 100 - y));
+      // Y maps to value: 100% top → 0% bottom (inverted)
+      const newV = Math.max(0, Math.min(100, 100 - y));
+
       setS(newS);
-      setL(newL);
-      updateColor(h, newS, newL);
-    };
+      setV(newV);
+      updateColor(h, newS, newV);
+    },
+    [h, updateColor]
+  );
 
-    const handleMouseUp = () => {
-      document.removeEventListener("mousemove", handleMouseMove);
-      document.removeEventListener("mouseup", handleMouseUp);
-    };
+  const handleCanvasInteraction = useCallback(
+    (e: MouseEvent | TouchEvent) => {
+      if (!canvasRef.current) return;
 
-    document.addEventListener("mousemove", handleMouseMove);
-    document.addEventListener("mouseup", handleMouseUp);
-  };
+      const rect = canvasRef.current.getBoundingClientRect();
+      let clientX: number, clientY: number;
+
+      if (e instanceof TouchEvent) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      } else {
+        clientX = e.clientX;
+        clientY = e.clientY;
+      }
+
+      const x = ((clientX - rect.left) / rect.width) * 100;
+      const y = ((clientY - rect.top) / rect.height) * 100;
+
+      updateFromPosition(x, y);
+    },
+    [updateFromPosition]
+  );
+
+  const handleMouseDown = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      isDraggingRef.current = true;
+      handleCanvasInteraction(e.nativeEvent);
+
+      const handleMouseMove = (moveEvent: MouseEvent) => {
+        if (!isDraggingRef.current) return;
+        handleCanvasInteraction(moveEvent);
+      };
+
+      const handleMouseUp = () => {
+        isDraggingRef.current = false;
+        document.removeEventListener("mousemove", handleMouseMove);
+        document.removeEventListener("mouseup", handleMouseUp);
+      };
+
+      document.addEventListener("mousemove", handleMouseMove);
+      document.addEventListener("mouseup", handleMouseUp);
+    },
+    [handleCanvasInteraction]
+  );
+
+  const handleTouchStart = useCallback(
+    (e: React.TouchEvent<HTMLCanvasElement>) => {
+      isDraggingRef.current = true;
+      handleCanvasInteraction(e.nativeEvent);
+
+      const handleTouchMove = (moveEvent: TouchEvent) => {
+        if (!isDraggingRef.current) return;
+        handleCanvasInteraction(moveEvent);
+      };
+
+      const handleTouchEnd = () => {
+        isDraggingRef.current = false;
+        document.removeEventListener("touchmove", handleTouchMove);
+        document.removeEventListener("touchend", handleTouchEnd);
+      };
+
+      document.addEventListener("touchmove", handleTouchMove);
+      document.addEventListener("touchend", handleTouchEnd);
+    },
+    [handleCanvasInteraction]
+  );
 
   const bgClass = isDark ? "bg-[#1a1a1a]" : "bg-white";
   const textClass = isDark ? "text-white" : "text-gray-900";
@@ -205,32 +255,33 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
 
   return (
     <div
-      ref={containerRef}
       className={`flex flex-col gap-3 p-3 rounded-lg shadow-lg border w-64 ${bgClass} ${borderClass}`}
     >
-      {/* Saturation/Lightness canvas */}
-      <canvas
-        ref={canvasRef}
-        width={220}
-        height={200}
-        onClick={handleCanvasClick}
-        onMouseDown={handleCanvasMouseDown}
-        className="relative w-full rounded-md border cursor-crosshair"
-        style={{
-          borderColor: isDark ? "rgb(55, 65, 81)" : "rgb(209, 213, 219)",
-          display: "block",
-        }}
-      />
+      {/* Saturation/Value canvas container */}
+      <div className="relative">
+        <canvas
+          ref={canvasRef}
+          width={220}
+          height={200}
+          onMouseDown={handleMouseDown}
+          onTouchStart={handleTouchStart}
+          className="w-full rounded-md border cursor-crosshair block"
+          style={{
+            borderColor: isDark ? "rgb(55, 65, 81)" : "rgb(209, 213, 219)",
+          }}
+        />
 
-      {/* Crosshair indicator */}
-      <div
-        className="absolute w-4 h-4 border-2 border-white rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2"
-        style={{
-          left: `calc(12px + ${s}% * (220px / 100))`,
-          top: `calc(63px + ${100 - l}% * (200px / 100))`,
-          boxShadow: "0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 4px rgba(0, 0, 0, 0.3)",
-        }}
-      />
+        {/* Crosshair indicator - positioned relative to canvas */}
+        <div
+          className="absolute w-4 h-4 border-2 border-white rounded-full pointer-events-none"
+          style={{
+            left: `${s}%`,
+            top: `${100 - v}%`,
+            transform: "translate(-50%, -50%)",
+            boxShadow: "0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 4px rgba(0, 0, 0, 0.3)",
+          }}
+        />
+      </div>
 
       {/* Hue slider */}
       <div className="flex flex-col gap-1">
@@ -243,7 +294,7 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
           onChange={(e) => {
             const newH = Number(e.target.value);
             setH(newH);
-            updateColor(newH, s, l);
+            updateColor(newH, s, v);
           }}
           className="w-full h-2 rounded-lg appearance-none cursor-pointer"
           style={{
@@ -256,7 +307,7 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
       {/* RGB Inputs */}
       <div className="grid grid-cols-3 gap-2">
         {["R", "G", "B"].map((label, idx) => {
-          const rgb = hslToRgb(h, s, l);
+          const rgb = hsvToRgb(h, s, v);
           const values = [rgb.r, rgb.g, rgb.b];
           const value = values[idx];
 
@@ -271,10 +322,10 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
                 onChange={(e) => {
                   const newVal = Math.max(0, Math.min(255, Number(e.target.value)));
                   const newRgb = { ...rgb, [["r", "g", "b"][idx]]: newVal };
-                  const newHsl = rgbToHsl(newRgb.r, newRgb.g, newRgb.b);
-                  setH(newHsl.h);
-                  setS(newHsl.s);
-                  setL(newHsl.l);
+                  const newHsv = rgbToHsv(newRgb.r, newRgb.g, newRgb.b);
+                  setH(newHsv.h);
+                  setS(newHsv.s);
+                  setV(newHsv.v);
                   const newHex = rgbToHex(newRgb.r, newRgb.g, newRgb.b);
                   onChange(newHex);
                 }}
