@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
+import { useDarkMode } from "@/hooks/useDarkMode";
 
 interface ColorInputProps {
   hex: string;
@@ -103,10 +104,12 @@ function hslToRgb(h: number, s: number, l: number): { r: number; g: number; b: n
 }
 
 function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) => void }) {
+  const { isDark } = useDarkMode();
   const [h, setH] = useState(0);
   const [s, setS] = useState(0);
   const [l, setL] = useState(50);
-  const svRef = useRef<HTMLDivElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Initialize HSL from hex
   useEffect(() => {
@@ -116,6 +119,35 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
     setS(hsl.s);
     setL(hsl.l);
   }, [hex]);
+
+  // Draw canvas gradient
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+
+    const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+
+    const width = canvas.width;
+    const height = canvas.height;
+
+    // Create gradient: left=white, right=pure color
+    const horizontalGrad = ctx.createLinearGradient(0, 0, width, 0);
+    horizontalGrad.addColorStop(0, "white");
+    horizontalGrad.addColorStop(1, `hsl(${h}, 100%, 50%)`);
+
+    // Fill horizontal gradient
+    ctx.fillStyle = horizontalGrad;
+    ctx.fillRect(0, 0, width, height);
+
+    // Create vertical gradient: top=transparent, bottom=black
+    const verticalGrad = ctx.createLinearGradient(0, 0, 0, height);
+    verticalGrad.addColorStop(0, "rgba(0, 0, 0, 0)");
+    verticalGrad.addColorStop(1, "rgba(0, 0, 0, 1)");
+
+    ctx.fillStyle = verticalGrad;
+    ctx.fillRect(0, 0, width, height);
+  }, [h]);
 
   const updateColor = useCallback(
     (newH?: number, newS?: number, newL?: number) => {
@@ -130,9 +162,9 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
     [h, s, l, onChange]
   );
 
-  const handleSVClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!svRef.current) return;
-    const rect = svRef.current.getBoundingClientRect();
+  const handleCanvasClick = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    if (!canvasRef.current) return;
+    const rect = canvasRef.current.getBoundingClientRect();
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
     const newS = Math.max(0, Math.min(100, x));
@@ -142,31 +174,67 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
     updateColor(h, newS, newL);
   };
 
+  const handleCanvasMouseDown = (e: React.MouseEvent<HTMLCanvasElement>) => {
+    handleCanvasClick(e);
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!canvasRef.current) return;
+      const rect = canvasRef.current.getBoundingClientRect();
+      const x = ((moveEvent.clientX - rect.left) / rect.width) * 100;
+      const y = ((moveEvent.clientY - rect.top) / rect.height) * 100;
+      const newS = Math.max(0, Math.min(100, x));
+      const newL = Math.max(0, Math.min(100, 100 - y));
+      setS(newS);
+      setL(newL);
+      updateColor(h, newS, newL);
+    };
+
+    const handleMouseUp = () => {
+      document.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    document.addEventListener("mousemove", handleMouseMove);
+    document.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const bgClass = isDark ? "bg-[#1a1a1a]" : "bg-white";
+  const textClass = isDark ? "text-white" : "text-gray-900";
+  const labelClass = isDark ? "text-gray-300" : "text-gray-600";
+  const borderClass = isDark ? "border-gray-700" : "border-gray-300";
+
   return (
-    <div className="flex flex-col gap-3 p-3 bg-white rounded-lg shadow-lg border border-gray-200 w-64">
-      {/* Saturation/Lightness square */}
-      <div
-        ref={svRef}
-        onClick={handleSVClick}
-        className="relative w-full h-48 rounded-md border border-gray-300 cursor-crosshair"
+    <div
+      ref={containerRef}
+      className={`flex flex-col gap-3 p-3 rounded-lg shadow-lg border w-64 ${bgClass} ${borderClass}`}
+    >
+      {/* Saturation/Lightness canvas */}
+      <canvas
+        ref={canvasRef}
+        width={220}
+        height={200}
+        onClick={handleCanvasClick}
+        onMouseDown={handleCanvasMouseDown}
+        className="relative w-full rounded-md border cursor-crosshair"
         style={{
-          background: `linear-gradient(to right, hsl(${h}, 0%, 50%), hsl(${h}, 100%, 50%)), linear-gradient(to top, black, transparent)`,
+          borderColor: isDark ? "rgb(55, 65, 81)" : "rgb(209, 213, 219)",
+          display: "block",
         }}
-      >
-        {/* Crosshair indicator */}
-        <div
-          className="absolute w-4 h-4 border-2 border-white rounded-full shadow-md pointer-events-none transform -translate-x-1/2 -translate-y-1/2"
-          style={{
-            left: `${s}%`,
-            top: `${100 - l}%`,
-            boxShadow: "0 0 0 1px rgba(0, 0, 0, 0.3), 0 0 4px rgba(0, 0, 0, 0.2)",
-          }}
-        />
-      </div>
+      />
+
+      {/* Crosshair indicator */}
+      <div
+        className="absolute w-4 h-4 border-2 border-white rounded-full pointer-events-none transform -translate-x-1/2 -translate-y-1/2"
+        style={{
+          left: `calc(12px + ${s}% * (220px / 100))`,
+          top: `calc(63px + ${100 - l}% * (200px / 100))`,
+          boxShadow: "0 0 0 1px rgba(0, 0, 0, 0.5), 0 0 4px rgba(0, 0, 0, 0.3)",
+        }}
+      />
 
       {/* Hue slider */}
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-600">Hue</label>
+        <label className={`text-xs font-medium ${labelClass}`}>Hue</label>
         <input
           type="range"
           min="0"
@@ -194,7 +262,7 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
 
           return (
             <div key={label} className="flex flex-col gap-1">
-              <label className="text-xs font-medium text-gray-600">{label}</label>
+              <label className={`text-xs font-medium ${labelClass}`}>{label}</label>
               <Input
                 type="number"
                 min="0"
@@ -210,7 +278,7 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
                   const newHex = rgbToHex(newRgb.r, newRgb.g, newRgb.b);
                   onChange(newHex);
                 }}
-                className="h-8 text-xs px-2"
+                className={`h-8 text-xs px-2 ${textClass}`}
               />
             </div>
           );
@@ -219,7 +287,7 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
 
       {/* HEX Input */}
       <div className="flex flex-col gap-1">
-        <label className="text-xs font-medium text-gray-600">HEX</label>
+        <label className={`text-xs font-medium ${labelClass}`}>HEX</label>
         <Input
           type="text"
           value={hex}
@@ -230,7 +298,7 @@ function ColorPicker({ hex, onChange }: { hex: string; onChange: (hex: string) =
             }
           }}
           maxLength={6}
-          className="h-8 text-xs font-mono px-2"
+          className={`h-8 text-xs font-mono px-2 ${textClass}`}
           placeholder="3B82F6"
         />
       </div>
