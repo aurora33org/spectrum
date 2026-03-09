@@ -28,9 +28,13 @@ export function ButtonsSection() {
         >
           Primary
         </button>
+        {/* Secondary: uses --s-accent when secondary palette is set, fallback to --p-300 */}
         <button
-          className="px-4 py-2 rounded-md text-sm font-medium"
-          style={{ backgroundColor: "var(--p-surface-2)", color: "var(--p-text-1)" }}
+          className="px-4 py-2 rounded-md text-sm font-medium text-white"
+          style={{
+            backgroundColor: "var(--s-accent, var(--p-300))",
+            color: "var(--s-50, #ffffff)",
+          }}
         >
           Secondary
         </button>
