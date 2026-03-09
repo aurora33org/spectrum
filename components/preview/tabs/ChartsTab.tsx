@@ -79,6 +79,11 @@ function LineChartSvg() {
   const toPoints = (data: number[]) =>
     data.map((v, i) => `${(i / (data.length - 1)) * w},${h - (v / 100) * h}`).join(" ");
 
+  const toAreaPath = (data: number[]) => {
+    const pts = data.map((v, i) => `${(i / (data.length - 1)) * w},${h - (v / 100) * h}`);
+    return `M${pts[0]} L${pts.join(" L")} L${w},${h} L0,${h} Z`;
+  };
+
   return (
     <div className="flex flex-col h-full">
       <p className="text-xs font-semibold mb-3">Line Chart</p>
@@ -91,6 +96,15 @@ function LineChartSvg() {
               x1={0} y1={h - (y / 100) * h}
               x2={w} y2={h - (y / 100) * h}
               stroke="currentColor" strokeOpacity="0.07" strokeWidth="1"
+            />
+          ))}
+          {/* Area fills */}
+          {LINE_DATA.map((data, i) => (
+            <path
+              key={`area-${i}`}
+              d={toAreaPath(data)}
+              fill={colors[i]}
+              fillOpacity="0.1"
             />
           ))}
           {/* Lines */}
@@ -132,23 +146,32 @@ function DonutChart() {
     <div className="flex flex-col h-full">
       <p className="text-xs font-semibold mb-3">Donut Chart</p>
       <div className="flex-1 flex items-center justify-center">
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: "rotate(-90deg)" }}>
-          <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeOpacity="0.07" strokeWidth={strokeW} />
-          {slices.map((s, i) => (
-            <circle
-              key={i}
-              cx={size / 2}
-              cy={size / 2}
-              r={r}
-              fill="none"
-              stroke={s.color}
-              strokeWidth={strokeW}
-              strokeDasharray={`${s.dash} ${s.gap}`}
-              strokeDashoffset={-s.offset}
-              strokeLinecap="butt"
-            />
-          ))}
-        </svg>
+        <div className="relative" style={{ width: size, height: size }}>
+          <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} style={{ transform: "rotate(-90deg)" }}>
+            <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="currentColor" strokeOpacity="0.07" strokeWidth={strokeW} />
+            {slices.map((s, i) => (
+              <circle
+                key={i}
+                cx={size / 2}
+                cy={size / 2}
+                r={r}
+                fill="none"
+                stroke={s.color}
+                strokeWidth={strokeW}
+                strokeDasharray={`${s.dash} ${s.gap}`}
+                strokeDashoffset={-s.offset}
+                strokeLinecap="butt"
+              />
+            ))}
+          </svg>
+          <div
+            className="absolute inset-0 flex flex-col items-center justify-center"
+            style={{ color: "var(--p-accent)" }}
+          >
+            <span className="text-xl font-bold">45%</span>
+            <span className="text-[9px] text-muted-foreground">Primary</span>
+          </div>
+        </div>
       </div>
       <Legend />
     </div>
@@ -187,16 +210,16 @@ function StackedBarChart() {
 export function ChartsTab() {
   return (
     <div className="grid grid-cols-2 gap-4 h-full">
-      <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--p-surface-1)", minHeight: 220 }}>
+      <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--p-surface-1)", minHeight: 280 }}>
         <MultiBarChart />
       </div>
-      <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--p-surface-1)", minHeight: 220 }}>
+      <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--p-surface-1)", minHeight: 280 }}>
         <LineChartSvg />
       </div>
-      <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--p-surface-1)", minHeight: 220 }}>
+      <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--p-surface-1)", minHeight: 280 }}>
         <DonutChart />
       </div>
-      <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--p-surface-1)", minHeight: 220 }}>
+      <div className="rounded-xl border p-4" style={{ backgroundColor: "var(--p-surface-1)", minHeight: 280 }}>
         <StackedBarChart />
       </div>
     </div>
