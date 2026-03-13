@@ -22,9 +22,9 @@ export function PreviewProvider({
       vars[`--p-${stop.stop}`] = stop.hex;
     }
     if (isDark) {
-      vars["--p-surface-1"]  = "var(--p-900)";
-      vars["--p-surface-2"]  = "var(--p-800)";
-      vars["--p-surface-3"]  = "var(--p-700)";
+      vars["--p-surface-1"]  = "color-mix(in srgb, var(--p-800) 40%, var(--p-900) 60%)";
+      vars["--p-surface-2"]  = "var(--p-900)";
+      vars["--p-surface-3"]  = "var(--p-800)";
       vars["--p-text-1"]     = "var(--p-50)";
       vars["--p-text-2"]     = "var(--p-300)";
       vars["--p-accent"]     = "var(--p-400)";
