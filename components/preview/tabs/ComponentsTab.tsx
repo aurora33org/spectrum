@@ -23,7 +23,7 @@ function SectionHeader({ label, color }: { label: string; color: string }) {
   );
 }
 
-// ── Component showcase card ────────────────────────────────────────
+// ── Component showcase card (neutral background for contrast) ────────────────────────────────────────
 function ComponentBox({
   label,
   children,
@@ -32,7 +32,7 @@ function ComponentBox({
   children: React.ReactNode;
 }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 p-4 rounded-lg" style={{ backgroundColor: "var(--p-surface-1)" }}>
+    <div className="flex flex-col items-center justify-center gap-3 p-4 rounded-lg bg-white dark:bg-black">
       <div className="flex items-center justify-center min-h-10">{children}</div>
       <p className="text-[9px] text-muted-foreground text-center">{label}</p>
     </div>
