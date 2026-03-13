@@ -25,6 +25,8 @@ export function PreviewProvider({
       vars["--p-surface-1"]  = "color-mix(in srgb, var(--p-800) 40%, var(--p-900) 60%)";
       vars["--p-surface-2"]  = "var(--p-900)";
       vars["--p-surface-3"]  = "var(--p-800)";
+      vars["--neutral-bg"]   = "#1c1c1e";
+      vars["--neutral-bg-2"] = "#2c2c2e";
       vars["--p-text-1"]     = "var(--p-50)";
       vars["--p-text-2"]     = "var(--p-300)";
       vars["--p-accent"]     = "var(--p-400)";
@@ -32,6 +34,8 @@ export function PreviewProvider({
       vars["--p-badge"]      = "var(--p-800)";
       vars["--p-badge-text"] = "var(--p-200)";
     } else {
+      vars["--neutral-bg"]   = "#ffffff";
+      vars["--neutral-bg-2"] = "#f4f4f5";
       vars["--p-surface-1"]  = "var(--p-50)";
       vars["--p-surface-2"]  = "var(--p-100)";
       vars["--p-surface-3"]  = "var(--p-200)";

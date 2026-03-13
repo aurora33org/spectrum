@@ -139,7 +139,7 @@ export function CardsTab() {
       </div>
 
       {/* ── Donut chart — expenses breakdown ── */}
-      <div className="rounded-2xl border p-4" style={{ backgroundColor: "var(--p-surface-1)" }}>
+      <div className="rounded-2xl border p-4" style={{ backgroundColor: "var(--neutral-bg)" }}>
         <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-1">Expenses</p>
         <p className="text-2xl font-bold mb-4">$14,919</p>
         <MiniDonut />
@@ -161,7 +161,7 @@ export function CardsTab() {
       </div>
 
       {/* ── Blog posts — 2 cols ── */}
-      <div className="col-span-2 rounded-2xl border p-5" style={{ backgroundColor: "var(--p-surface-1)" }}>
+      <div className="col-span-2 rounded-2xl border p-5" style={{ backgroundColor: "var(--neutral-bg)" }}>
         <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-3">
           Latest Posts
         </p>
@@ -208,7 +208,7 @@ export function CardsTab() {
       </div>
 
       {/* ── Income stats — sparklines ── */}
-      <div className="rounded-2xl border p-4" style={{ backgroundColor: "var(--p-surface-1)" }}>
+      <div className="rounded-2xl border p-4" style={{ backgroundColor: "var(--neutral-bg)" }}>
         <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-3">Income</p>
         <div className="flex flex-col gap-3">
           {[
@@ -230,7 +230,7 @@ export function CardsTab() {
       </div>
 
       {/* ── Login form — col-span-2, tertiary block full height 35% ── */}
-      <div className="col-span-2 rounded-2xl border overflow-hidden flex" style={{ backgroundColor: "var(--p-surface-1)" }}>
+      <div className="col-span-2 rounded-2xl border overflow-hidden flex" style={{ backgroundColor: "var(--neutral-bg)" }}>
         <div className="flex-1 p-5 space-y-3">
           <p className="text-sm font-bold">Sign in to your account</p>
           <div>
@@ -260,7 +260,7 @@ export function CardsTab() {
       </div>
 
       {/* ── Data table with accent header ── */}
-      <div className="col-span-2 rounded-2xl border overflow-hidden" style={{ backgroundColor: "var(--p-surface-1)" }}>
+      <div className="col-span-2 rounded-2xl border overflow-hidden" style={{ backgroundColor: "var(--neutral-bg)" }}>
         <div
           style={{
             backgroundColor: "color-mix(in srgb, var(--p-accent) 70%, var(--p-surface-1))",
@@ -315,7 +315,7 @@ export function CardsTab() {
       </div>
 
       {/* ── Expense progress bars — larger horizontal bars ── */}
-      <div className="rounded-2xl border p-5" style={{ backgroundColor: "var(--p-surface-1)" }}>
+      <div className="rounded-2xl border p-5" style={{ backgroundColor: "var(--neutral-bg)" }}>
         <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-3">Budget Usage</p>
         <div className="flex flex-col gap-3">
           {EXPENSES.map(({ label, amount, pct, color }) => (
@@ -336,7 +336,7 @@ export function CardsTab() {
       </div>
 
       {/* ── Badges & alerts row — full width with primary/secondary/tertiary ── */}
-      <div className="col-span-4 rounded-2xl border p-4 flex flex-col gap-3" style={{ backgroundColor: "var(--p-surface-1)" }}>
+      <div className="col-span-4 rounded-2xl border p-4 flex flex-col gap-3" style={{ backgroundColor: "var(--neutral-bg)" }}>
         <div className="flex flex-wrap items-center gap-2">
           <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mr-1">Badges</p>
           <Badge style={{ backgroundColor: "var(--p-accent)", color: "#fff", border: "none" }}>Active</Badge>
