@@ -2,15 +2,29 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Switch } from "@/components/ui/switch";
-import { Slider } from "@/components/ui/slider";
 import { Progress } from "@/components/ui/progress";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Input } from "@/components/ui/input";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
-// ── A card that wraps one component with a label ───────────────────
-function ComponentCard({
+// ── Section Header with color indicator ────────────────────────────
+function SectionHeader({ label, color }: { label: string; color: string }) {
+  return (
+    <div
+      className="px-4 py-3 mb-4 flex items-center gap-2 rounded-lg"
+      style={{
+        borderLeft: `3px solid ${color}`,
+        background: `color-mix(in srgb, ${color} 8%, transparent)`,
+      }}
+    >
+      <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
+      <p className="text-sm font-semibold">{label}</p>
+    </div>
+  );
+}
+
+// ── Component showcase card ────────────────────────────────────────
+function ComponentBox({
   label,
   children,
 }: {
@@ -18,22 +32,9 @@ function ComponentCard({
   children: React.ReactNode;
 }) {
   return (
-    <div
-      className="rounded-xl border flex flex-col items-center justify-center gap-3 p-5"
-      style={{ backgroundColor: "var(--p-surface-1)", minHeight: 100 }}
-    >
-      <div className="flex items-center justify-center">{children}</div>
-      <p className="text-[10px] text-muted-foreground text-center">{label}</p>
-    </div>
-  );
-}
-
-// ── Palette column header ──────────────────────────────────────────
-function ColHeader({ label, color }: { label: string; color: string }) {
-  return (
-    <div className="flex items-center gap-2 mb-3 px-1">
-      <div className="w-3 h-3 rounded-full" style={{ backgroundColor: color }} />
-      <p className="text-xs font-semibold text-muted-foreground">{label}</p>
+    <div className="flex flex-col items-center justify-center gap-3 p-4 rounded-lg" style={{ backgroundColor: "var(--p-surface-1)" }}>
+      <div className="flex items-center justify-center min-h-10">{children}</div>
+      <p className="text-[9px] text-muted-foreground text-center">{label}</p>
     </div>
   );
 }
@@ -45,122 +46,127 @@ export function ComponentsTab() {
   const tAccent = "var(--t-accent, var(--p-accent))";
 
   return (
-    <div className="grid grid-cols-3 gap-6">
+    <div className="grid grid-cols-3 gap-8">
 
-      {/* ── Primary column ── */}
+      {/* ═══ PRIMARY SECTION ═══ */}
       <div>
-        <ColHeader label="Primary" color={pAccent} />
-        <div className="flex flex-col gap-3">
-          <ComponentCard label="Button · Primary">
-            <Button>Continue →</Button>
-          </ComponentCard>
-          <ComponentCard label="Badge">
-            <Badge>New feature</Badge>
-          </ComponentCard>
-          <ComponentCard label="Checkbox">
+        <SectionHeader label="Primary" color={pAccent} />
+        <div className="space-y-3">
+          <ComponentBox label="Button · Solid">
+            <Button className="px-4 py-2 text-sm" style={{ backgroundColor: pAccent }}>
+              Continue →
+            </Button>
+          </ComponentBox>
+          <ComponentBox label="Badge · Accent">
+            <Badge style={{ backgroundColor: pAccent, color: "#fff", border: "none" }}>
+              Featured
+            </Badge>
+          </ComponentBox>
+          <ComponentBox label="Alert · Primary">
+            <Alert style={{ borderColor: pAccent, borderLeftWidth: "3px" }}>
+              <AlertCircle className="h-4 w-4" style={{ color: pAccent }} />
+              <AlertDescription className="text-xs">Primary message here</AlertDescription>
+            </Alert>
+          </ComponentBox>
+          <ComponentBox label="Toggle · Enabled">
             <div className="flex items-center gap-2">
-              <Checkbox id="cb-p" defaultChecked />
-              <label htmlFor="cb-p" className="text-xs">Accept terms</label>
+              <Switch defaultChecked style={{ "--primary": pAccent } as React.CSSProperties} />
+              <span className="text-xs text-muted-foreground">On</span>
             </div>
-          </ComponentCard>
-          <ComponentCard label="Avatar">
-            <Avatar>
-              <AvatarFallback style={{ backgroundColor: pAccent, color: "white" }}>AL</AvatarFallback>
-            </Avatar>
-          </ComponentCard>
-          <ComponentCard label="Progress 70%">
-            <div className="w-32">
+          </ComponentBox>
+          <ComponentBox label="Progress · 70%">
+            <div className="w-32 h-3">
               <Progress value={70} />
             </div>
-          </ComponentCard>
+          </ComponentBox>
         </div>
       </div>
 
-      {/* ── Secondary column ── */}
+      {/* ═══ SECONDARY SECTION ═══ */}
       <div>
-        <ColHeader label="Secondary" color={sAccent} />
-        <div className="flex flex-col gap-3">
-          <ComponentCard label="Button · Soft">
+        <SectionHeader label="Secondary" color={sAccent} />
+        <div className="space-y-3">
+          <ComponentBox label="Button · Outline">
             <Button
               variant="outline"
+              className="px-4 py-2 text-sm"
               style={{
                 borderColor: sAccent,
                 color: sAccent,
-                backgroundColor: `color-mix(in srgb, ${sAccent} 10%, transparent)`,
+                backgroundColor: `color-mix(in srgb, ${sAccent} 8%, transparent)`,
               }}
             >
               Explore →
             </Button>
-          </ComponentCard>
-          <ComponentCard label="Badge · Outline">
+          </ComponentBox>
+          <ComponentBox label="Badge · Outline">
             <Badge
               variant="outline"
               style={{ borderColor: sAccent, color: sAccent }}
             >
-              Beta
+              In Development
             </Badge>
-          </ComponentCard>
-          <ComponentCard label="Switch">
-            <div
-              className="flex items-center gap-2"
-              style={{ "--primary": sAccent } as React.CSSProperties}
-            >
-              <Switch defaultChecked />
-              <span className="text-xs text-muted-foreground">Enabled</span>
+          </ComponentBox>
+          <ComponentBox label="Alert · Secondary">
+            <Alert style={{ borderColor: sAccent, borderLeftWidth: "3px" }}>
+              <AlertCircle className="h-4 w-4" style={{ color: sAccent }} />
+              <AlertDescription className="text-xs">Secondary notice here</AlertDescription>
+            </Alert>
+          </ComponentBox>
+          <ComponentBox label="Toggle · Disabled">
+            <div className="flex items-center gap-2">
+              <Switch style={{ "--primary": sAccent } as React.CSSProperties} />
+              <span className="text-xs text-muted-foreground">Off</span>
             </div>
-          </ComponentCard>
-          <ComponentCard label="Avatar">
-            <Avatar>
-              <AvatarFallback style={{ backgroundColor: sAccent, color: "white" }}>MK</AvatarFallback>
-            </Avatar>
-          </ComponentCard>
-          <ComponentCard label="Slider">
-            <div className="w-32">
-              <Slider defaultValue={[60]} max={100} step={1} />
+          </ComponentBox>
+          <ComponentBox label="Progress · 45%">
+            <div className="w-32 h-3">
+              <Progress value={45} />
             </div>
-          </ComponentCard>
+          </ComponentBox>
         </div>
       </div>
 
-      {/* ── Tertiary column ── */}
+      {/* ═══ TERTIARY SECTION ═══ */}
       <div>
-        <ColHeader label="Tertiary" color={tAccent} />
-        <div className="flex flex-col gap-3">
-          <ComponentCard label="Button · Ghost">
+        <SectionHeader label="Tertiary" color={tAccent} />
+        <div className="space-y-3">
+          <ComponentBox label="Button · Ghost">
             <Button
               variant="ghost"
+              className="px-4 py-2 text-sm border"
               style={{
-                border: `1.5px solid ${tAccent}`,
+                borderColor: tAccent,
                 color: tAccent,
               }}
             >
               Discover →
             </Button>
-          </ComponentCard>
-          <ComponentCard label="Badge · Accent">
+          </ComponentBox>
+          <ComponentBox label="Badge · Accent">
             <Badge
               style={{ backgroundColor: tAccent, color: "white", border: "none" }}
             >
-              Hot
+              Hot & New
             </Badge>
-          </ComponentCard>
-          <ComponentCard label="Input · Focused">
-            <Input
-              defaultValue="Search..."
-              className="w-32 text-xs h-8"
-              style={{ borderColor: tAccent, outline: `2px solid color-mix(in srgb, ${tAccent} 30%, transparent)` }}
-            />
-          </ComponentCard>
-          <ComponentCard label="Avatar">
-            <Avatar>
-              <AvatarFallback style={{ backgroundColor: tAccent, color: "white" }}>PX</AvatarFallback>
-            </Avatar>
-          </ComponentCard>
-          <ComponentCard label="Progress 45%">
-            <div className="w-32 h-2 rounded-full overflow-hidden" style={{ backgroundColor: `color-mix(in srgb, ${tAccent} 20%, transparent)` }}>
-              <div className="h-full rounded-full w-[45%]" style={{ backgroundColor: tAccent }} />
+          </ComponentBox>
+          <ComponentBox label="Alert · Tertiary">
+            <Alert style={{ borderColor: tAccent, borderLeftWidth: "3px" }}>
+              <AlertCircle className="h-4 w-4" style={{ color: tAccent }} />
+              <AlertDescription className="text-xs">Tertiary warning here</AlertDescription>
+            </Alert>
+          </ComponentBox>
+          <ComponentBox label="Toggle · Intermediate">
+            <div className="flex items-center gap-2">
+              <Switch defaultChecked style={{ "--primary": tAccent } as React.CSSProperties} />
+              <span className="text-xs text-muted-foreground">Mixed</span>
             </div>
-          </ComponentCard>
+          </ComponentBox>
+          <ComponentBox label="Progress · 60%">
+            <div className="w-32 h-3">
+              <Progress value={60} />
+            </div>
+          </ComponentBox>
         </div>
       </div>
 

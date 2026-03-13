@@ -33,6 +33,9 @@ const SHOWCASE_TABS = [
 
 type ShowcaseTabId = typeof SHOWCASE_TABS[number]["id"];
 
+// Tabs that respond to dark mode toggle
+const THEME_AWARE_TABS: ShowcaseTabId[] = ["cards", "components", "apps", "charts"];
+
 import { useMultiPalette } from "@/hooks/useMultiPalette";
 import { useDarkMode } from "@/hooks/useDarkMode";
 import { generateScale } from "@/lib/color-engine";

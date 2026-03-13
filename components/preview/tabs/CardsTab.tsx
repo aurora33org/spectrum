@@ -119,10 +119,10 @@ export function CardsTab() {
   return (
     <div className="grid grid-cols-4 gap-4">
 
-      {/* ── Hero "Track expenses" — p-500 bold bg, col-span-2 row-span-2 ── */}
+      {/* ── Hero "Track expenses" — gradient p-500→p-700, col-span-2 row-span-2 ── */}
       <div
         className="col-span-2 row-span-2 rounded-2xl p-6 flex flex-col justify-between"
-        style={{ backgroundColor: "var(--p-500)", color: "white", minHeight: 260 }}
+        style={{ background: "linear-gradient(135deg, var(--p-500), var(--p-700))", color: "white", minHeight: 260 }}
       >
         <div>
           <p className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: "var(--p-200)" }}>
@@ -161,7 +161,7 @@ export function CardsTab() {
         <div className="flex flex-col gap-3">
           {BLOG_POSTS.map((post, i) => (
             <div key={post.title} className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg flex-shrink-0" style={{ background: BLOG_BG[i] }} />
+              <div className="w-14 h-14 rounded-lg flex-shrink-0" style={{ background: BLOG_BG[i] }} />
               <div className="flex-1 min-w-0">
                 <p className="text-xs font-medium leading-snug truncate">{post.title}</p>
                 <p className="text-[10px] mt-0.5 text-muted-foreground">{post.category} · {post.read}</p>
@@ -215,44 +215,64 @@ export function CardsTab() {
         </div>
       </div>
 
-      {/* ── Login form — col-span-2 ── */}
-      <div className="col-span-2 rounded-2xl border p-5" style={{ backgroundColor: "var(--p-surface-1)" }}>
-        <div className="flex items-center gap-5">
-          <div className="flex-1 space-y-3">
-            <p className="text-sm font-bold">Sign in to your account</p>
-            <div>
-              <p className="text-[10px] font-medium text-muted-foreground mb-1">Email address</p>
-              <div
-                className="w-full h-8 rounded-md border px-3 flex items-center text-xs"
-                style={{ borderColor: "var(--p-border)", backgroundColor: "var(--p-surface-2)", color: "var(--p-text-1)" }}
-              >
-                alice@example.com
-              </div>
+      {/* ── Login form — col-span-2, tertiary block full height 35% ── */}
+      <div className="col-span-2 rounded-2xl border overflow-hidden flex" style={{ backgroundColor: "var(--p-surface-1)" }}>
+        <div className="flex-1 p-5 space-y-3">
+          <p className="text-sm font-bold">Sign in to your account</p>
+          <div>
+            <p className="text-[10px] font-medium text-muted-foreground mb-1">Email address</p>
+            <div
+              className="w-full h-8 rounded-md border px-3 flex items-center text-xs"
+              style={{ borderColor: "var(--p-border)", backgroundColor: "var(--p-surface-2)", color: "var(--p-text-1)" }}
+            >
+              alice@example.com
             </div>
-            <div>
-              <p className="text-[10px] font-medium text-muted-foreground mb-1">Password</p>
-              <div
-                className="w-full h-8 rounded-md border px-3 flex items-center text-xs text-muted-foreground"
-                style={{ borderColor: "var(--p-border)", backgroundColor: "var(--p-surface-2)" }}
-              >
-                ••••••••
-              </div>
-            </div>
-            <Button className="w-full h-8 text-xs">Sign in</Button>
           </div>
-          <div
-            className="w-28 h-28 rounded-xl flex-shrink-0 hidden sm:block"
-            style={{ background: "linear-gradient(135deg, var(--t-400, var(--p-400)), var(--t-700, var(--p-700)))" }}
-          />
+          <div>
+            <p className="text-[10px] font-medium text-muted-foreground mb-1">Password</p>
+            <div
+              className="w-full h-8 rounded-md border px-3 flex items-center text-xs text-muted-foreground"
+              style={{ borderColor: "var(--p-border)", backgroundColor: "var(--p-surface-2)" }}
+            >
+              ••••••••
+            </div>
+          </div>
+          <Button className="w-full h-8 text-xs">Sign in</Button>
+        </div>
+        <div
+          className="flex-[0_0_35%] flex-shrink-0"
+          style={{ background: "linear-gradient(135deg, var(--t-400, var(--p-400)), var(--t-700, var(--p-700)))" }}
+        />
+      </div>
+
+      {/* ── Data table with p-600 header ── */}
+      <div className="col-span-2 rounded-2xl border overflow-hidden" style={{ backgroundColor: "var(--p-surface-1)" }}>
+        <div style={{ backgroundColor: "var(--p-600)", color: "white" }} className="px-4 py-3">
+          <p className="text-xs font-semibold">Recent Transactions</p>
+        </div>
+        <div className="p-4 space-y-2">
+          {[
+            { name: "Deposit", amount: "+$2,500", date: "Mar 12" },
+            { name: "Withdrawal", amount: "-$1,200", date: "Mar 10" },
+            { name: "Transfer", amount: "-$800", date: "Mar 8" },
+          ].map((row, i) => (
+            <div key={i} className="flex justify-between text-xs py-2 border-b border-border last:border-0">
+              <span className="text-muted-foreground">{row.name}</span>
+              <div className="text-right">
+                <p className="font-semibold">{row.amount}</p>
+                <p className="text-[10px] text-muted-foreground">{row.date}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
 
-      {/* ── Product card — p-900 dark bg ── */}
+      {/* ── Product card — p-900 dark bg with gradient image ── */}
       <div
         className="rounded-2xl overflow-hidden flex flex-col"
         style={{ backgroundColor: "var(--p-900)" }}
       >
-        <div className="flex-1 flex items-center justify-center p-4">
+        <div className="flex-1 flex items-center justify-center p-4" style={{ background: "linear-gradient(180deg, var(--p-100), var(--p-200))" }}>
           <div
             className="w-20 h-20 rounded-xl"
             style={{ background: "linear-gradient(135deg, var(--p-400), var(--s-accent, var(--p-600)))" }}
@@ -274,17 +294,17 @@ export function CardsTab() {
         </div>
       </div>
 
-      {/* ── Expense progress bars ── */}
+      {/* ── Expense progress bars — larger horizontal bars ── */}
       <div className="rounded-2xl border p-5" style={{ backgroundColor: "var(--p-surface-1)" }}>
         <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mb-3">Budget Usage</p>
         <div className="flex flex-col gap-3">
           {EXPENSES.map(({ label, amount, pct, color }) => (
             <div key={label}>
-              <div className="flex justify-between text-[10px] mb-1">
+              <div className="flex justify-between text-[10px] mb-2">
                 <span className="text-muted-foreground">{label}</span>
                 <span className="font-semibold tabular-nums">{amount}</span>
               </div>
-              <div className="h-1.5 rounded-full bg-muted overflow-hidden">
+              <div className="h-3 rounded-full bg-muted overflow-hidden">
                 <div
                   className="h-full rounded-full"
                   style={{ width: `${pct}%`, backgroundColor: color }}
@@ -295,26 +315,34 @@ export function CardsTab() {
         </div>
       </div>
 
-      {/* ── Badges & status row — full width ── */}
-      <div className="col-span-4 rounded-2xl border p-4 flex flex-wrap items-center gap-3" style={{ backgroundColor: "var(--p-surface-1)" }}>
-        <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mr-2">Status</p>
-        <Badge style={{ backgroundColor: "var(--p-accent)", color: "#fff", border: "none" }}>Active</Badge>
-        <Badge style={{ backgroundColor: "var(--s-accent, var(--p-300))", color: "#fff", border: "none" }}>Beta</Badge>
-        <Badge style={{ backgroundColor: "var(--t-accent, var(--p-200))", color: "#fff", border: "none" }}>New</Badge>
-        <Badge variant="outline">Stable</Badge>
-        <Badge variant="secondary">Pending</Badge>
-        <div className="ml-auto flex items-center gap-2">
+      {/* ── Badges & alerts row — full width with primary/secondary/tertiary ── */}
+      <div className="col-span-4 rounded-2xl border p-4 flex flex-col gap-3" style={{ backgroundColor: "var(--p-surface-1)" }}>
+        <div className="flex flex-wrap items-center gap-2">
+          <p className="text-[10px] uppercase tracking-widest font-semibold text-muted-foreground mr-1">Badges</p>
+          <Badge style={{ backgroundColor: "var(--p-accent)", color: "#fff", border: "none" }}>Active</Badge>
+          <Badge style={{ backgroundColor: "var(--s-accent, var(--p-300))", color: "#fff", border: "none" }}>Beta</Badge>
+          <Badge style={{ backgroundColor: "var(--t-accent, var(--p-200))", color: "#fff", border: "none" }}>New</Badge>
+          <Badge variant="outline">Stable</Badge>
+          <Badge variant="secondary">Pending</Badge>
+        </div>
+        <div className="grid grid-cols-3 gap-2">
           <div
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs"
-            style={{ backgroundColor: "var(--p-surface-2)", color: "var(--p-text-1)", borderLeft: "3px solid var(--p-accent)" }}
-          >
-            ℹ Your export is ready to download.
-          </div>
-          <div
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs text-white"
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white"
             style={{ backgroundColor: "var(--p-accent)" }}
           >
-            ✓ Palette saved.
+            ✓ Primary alert
+          </div>
+          <div
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white"
+            style={{ backgroundColor: "var(--s-accent, var(--p-500))" }}
+          >
+            ℹ Secondary alert
+          </div>
+          <div
+            className="flex items-center gap-2 px-3 py-2 rounded-lg text-xs text-white"
+            style={{ backgroundColor: "var(--t-accent, var(--p-500))" }}
+          >
+            ⚠ Tertiary alert
           </div>
         </div>
       </div>
