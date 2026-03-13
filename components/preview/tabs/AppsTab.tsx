@@ -17,35 +17,35 @@ function PhoneFrame({ accentColor, headerGradient, label }: PhoneProps) {
           width: 200,
           height: 400,
           borderRadius: "2rem",
-          backgroundColor: "var(--p-surface-1)",
-          boxShadow: "0 20px 40px rgba(0,0,0,0.2)",
-          border: "1px solid var(--p-border)",
+          backgroundColor: "#111",
+          boxShadow: "0 20px 40px rgba(0,0,0,0.6)",
+          border: "1px solid rgba(255,255,255,0.1)",
         }}
       >
         {/* Notch */}
         <div className="flex justify-center pt-2.5 pb-1 flex-shrink-0">
-          <div className="w-16 h-4 rounded-full" style={{ backgroundColor: "var(--p-surface-3)" }} />
+          <div className="w-16 h-4 rounded-full bg-black" />
         </div>
 
         {/* Content */}
         <div className="flex-1 flex flex-col px-3 py-2 gap-3 overflow-hidden">
           {/* Header with gradient */}
           <div
-            className="rounded-lg p-3"
-            style={{ backgroundColor: accentColor }}
+            className="rounded-lg p-3 text-white"
+            style={{ background: headerGradient }}
           >
-            <p className="text-[9px] font-semibold" style={{ color: "var(--p-text-2)" }}>Welcome</p>
-            <p className="text-sm font-bold mt-1" style={{ color: "var(--p-text-1)" }}>Dashboard</p>
+            <p className="text-[9px] font-semibold">Welcome</p>
+            <p className="text-sm font-bold mt-1">Dashboard</p>
           </div>
 
           {/* Hero card */}
           <div
-            className="rounded-lg p-2.5 flex-1"
+            className="rounded-lg p-2.5 text-white flex-1"
             style={{ backgroundColor: accentColor }}
           >
-            <p className="text-[8px] font-semibold" style={{ color: "var(--p-text-2)" }}>Today's Stats</p>
-            <p className="text-lg font-bold mt-1" style={{ color: "var(--p-text-1)" }}>8,592</p>
-            <p className="text-[8px] mt-0.5" style={{ color: "var(--p-text-2)" }}>+12% from yesterday</p>
+            <p className="text-[8px] font-semibold opacity-80">Today's Stats</p>
+            <p className="text-lg font-bold mt-1">8,592</p>
+            <p className="text-[8px] opacity-70 mt-0.5">+12% from yesterday</p>
           </div>
 
           {/* Badges row */}
@@ -67,12 +67,12 @@ function PhoneFrame({ accentColor, headerGradient, label }: PhoneProps) {
           </div>
 
           {/* Nav */}
-          <div className="flex justify-around pt-2" style={{ borderTop: "1px solid var(--p-border)" }}>
+          <div className="flex justify-around pt-2 border-t border-white/10">
             {["⊕", "♡", "◎"].map((icon, i) => (
               <div key={i} className="text-center">
                 <span
                   className="text-base"
-                  style={{ color: i === 0 ? accentColor : "var(--p-text-2)" }}
+                  style={{ color: i === 0 ? accentColor : "rgba(255,255,255,0.3)" }}
                 >
                   {icon}
                 </span>
