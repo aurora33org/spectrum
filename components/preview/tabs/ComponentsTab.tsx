@@ -7,14 +7,14 @@ import { Progress } from "@/components/ui/progress";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
-// ── Section Header with color indicator ────────────────────────────
+// ── Section Header with color indicator (neutral background) ────────────────────────────
 function SectionHeader({ label, color }: { label: string; color: string }) {
   return (
     <div
       className="px-4 py-3 mb-4 flex items-center gap-2 rounded-lg"
       style={{
         borderLeft: `3px solid ${color}`,
-        background: `color-mix(in srgb, ${color} 8%, transparent)`,
+        backgroundColor: "rgba(128, 128, 128, 0.08)",
       }}
     >
       <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: color }} />
