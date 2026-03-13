@@ -119,17 +119,21 @@ export function CardsTab() {
   return (
     <div className="grid grid-cols-4 gap-4">
 
-      {/* ── Hero "Track expenses" — gradient p-500→p-700, col-span-2 row-span-2 ── */}
+      {/* ── Hero "Track expenses" — gradient mixed with surfaces for theme-aware, col-span-2 row-span-2 ── */}
       <div
         className="col-span-2 row-span-2 rounded-2xl p-6 flex flex-col justify-between"
-        style={{ background: "linear-gradient(135deg, var(--p-500), var(--p-700))", color: "white", minHeight: 260 }}
+        style={{
+          background: "linear-gradient(135deg, color-mix(in srgb, var(--p-accent) 85%, var(--p-surface-1)), color-mix(in srgb, var(--p-accent) 55%, var(--p-surface-1)))",
+          color: "var(--p-text-1)",
+          minHeight: 260
+        }}
       >
         <div>
-          <p className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: "var(--p-200)" }}>
+          <p className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: "var(--p-text-2)" }}>
             Monthly Overview
           </p>
           <p className="text-3xl font-bold mt-1">Track your expenses</p>
-          <p className="text-5xl font-bold mt-2" style={{ color: "var(--p-100)" }}>$12,543</p>
+          <p className="text-5xl font-bold mt-2">$12,543</p>
         </div>
         <HeroBarChart />
       </div>
@@ -141,16 +145,19 @@ export function CardsTab() {
         <MiniDonut />
       </div>
 
-      {/* ── "Gain control" — s-accent bold bg ── */}
+      {/* ── "Gain control" — s-accent mixed with surfaces ── */}
       <div
         className="rounded-2xl p-5 flex flex-col justify-between"
-        style={{ backgroundColor: "var(--s-accent, var(--p-700))", color: "white" }}
+        style={{
+          backgroundColor: "color-mix(in srgb, var(--s-accent, var(--p-500)) 75%, var(--p-surface-1))",
+          color: "var(--p-text-1)"
+        }}
       >
         <div>
-          <Target className="w-7 h-7 mb-2" style={{ color: "rgba(255,255,255,0.7)" }} />
+          <Target className="w-7 h-7 mb-2" style={{ color: "var(--s-accent, var(--p-500))" }} />
           <p className="text-xl font-bold leading-tight">Gain control of your finances</p>
         </div>
-        <p className="text-4xl font-bold mt-3" style={{ color: "rgba(255,255,255,0.85)" }}>+18%</p>
+        <p className="text-4xl font-bold mt-3">+18%</p>
       </div>
 
       {/* ── Blog posts — 2 cols ── */}
@@ -174,20 +181,27 @@ export function CardsTab() {
         </div>
       </div>
 
-      {/* ── "Create budgets" CTA — t-accent bold bg ── */}
+      {/* ── "Create budgets" CTA — t-accent mixed with surfaces ── */}
       <div
         className="rounded-2xl p-5 flex flex-col justify-between"
-        style={{ backgroundColor: "var(--t-accent, var(--p-600))", color: "white" }}
+        style={{
+          backgroundColor: "color-mix(in srgb, var(--t-accent, var(--p-500)) 75%, var(--p-surface-1))",
+          color: "var(--p-text-1)"
+        }}
       >
         <div>
-          <Zap className="w-6 h-6 mb-2" style={{ color: "rgba(255,255,255,0.7)" }} />
+          <Zap className="w-6 h-6 mb-2" style={{ color: "var(--t-accent, var(--p-500))" }} />
           <p className="text-sm font-bold">Create budgets</p>
-          <p className="text-[11px] mt-1" style={{ color: "rgba(255,255,255,0.7)" }}>Stay on track with smart limits</p>
+          <p className="text-[11px] mt-1" style={{ color: "var(--p-text-2)" }}>Stay on track with smart limits</p>
         </div>
         <Button
           size="sm"
           className="mt-3 w-full h-7 text-xs"
-          style={{ backgroundColor: "rgba(255,255,255,0.2)", color: "white", border: "1px solid rgba(255,255,255,0.3)" }}
+          style={{
+            backgroundColor: "color-mix(in srgb, var(--t-accent, var(--p-500)) 20%, var(--p-surface-1))",
+            color: "var(--t-accent, var(--p-500))",
+            border: `1px solid color-mix(in srgb, var(--t-accent, var(--p-500)) 30%, transparent)`
+          }}
         >
           Get started
         </Button>
@@ -245,9 +259,15 @@ export function CardsTab() {
         />
       </div>
 
-      {/* ── Data table with p-600 header ── */}
+      {/* ── Data table with accent header ── */}
       <div className="col-span-2 rounded-2xl border overflow-hidden" style={{ backgroundColor: "var(--p-surface-1)" }}>
-        <div style={{ backgroundColor: "var(--p-600)", color: "white" }} className="px-4 py-3">
+        <div
+          style={{
+            backgroundColor: "color-mix(in srgb, var(--p-accent) 70%, var(--p-surface-1))",
+            color: "var(--p-text-1)"
+          }}
+          className="px-4 py-3"
+        >
           <p className="text-xs font-semibold">Recent Transactions</p>
         </div>
         <div className="p-4 space-y-2">
