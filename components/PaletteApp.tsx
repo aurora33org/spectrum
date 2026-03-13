@@ -170,7 +170,7 @@ export function PaletteApp() {
             tertiaryPalette={tertiaryPalette}
           >
             {/* Palette strips */}
-            <div className="px-6 py-5 border-b" style={{ backgroundColor: "var(--p-surface-1)" }}>
+            <div className="px-6 py-5 border-b" style={{ backgroundColor: isDark ? "#1a1a1a" : "#f8f8f8" }}>
               <h2 className="text-[11px] font-semibold uppercase tracking-widest mb-4" style={{ color: "var(--p-text-2)" }}>
                 {activeTab === "brand"   ? "Brand Palette" :
                  activeTab === "neutral" ? "Neutral Reference Palettes" : "Status Reference Palettes"}
