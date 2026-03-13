@@ -189,7 +189,7 @@ export function PaletteApp() {
             {/* Showcase nav */}
             <div
               className="px-6 border-b flex gap-1 overflow-x-auto flex-shrink-0"
-              style={{ backgroundColor: "var(--p-surface-1)" }}
+              style={{ backgroundColor: "var(--neutral-bg)" }}
             >
               {SHOWCASE_TABS.map((tab) => (
                 <button
@@ -209,7 +209,7 @@ export function PaletteApp() {
             </div>
 
             {/* Showcase content */}
-            <div className="p-6" style={{ backgroundColor: "var(--p-surface-2)" }}>
+            <div className="p-6" style={{ backgroundColor: "var(--neutral-bg-2)" }}>
               {showcaseTab === "cards"      && <CardsTab />}
               {showcaseTab === "components" && <ComponentsTab />}
               {showcaseTab === "apps"       && <AppsTab />}
