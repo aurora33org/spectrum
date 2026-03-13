@@ -119,17 +119,21 @@ export function CardsTab() {
   return (
     <div className="grid grid-cols-4 gap-4">
 
-      {/* ── Hero "Track expenses" — gradient p-500→p-700, col-span-2 row-span-2 ── */}
+      {/* ── Hero "Track expenses" — accent background responsive to theme, col-span-2 row-span-2 ── */}
       <div
         className="col-span-2 row-span-2 rounded-2xl p-6 flex flex-col justify-between"
-        style={{ background: "linear-gradient(135deg, var(--p-500), var(--p-700))", color: "white", minHeight: 260 }}
+        style={{
+          backgroundColor: "var(--p-accent)",
+          color: "var(--p-text-1)",
+          minHeight: 260
+        }}
       >
         <div>
-          <p className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: "var(--p-200)" }}>
+          <p className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: "var(--p-text-2)" }}>
             Monthly Overview
           </p>
           <p className="text-3xl font-bold mt-1">Track your expenses</p>
-          <p className="text-5xl font-bold mt-2" style={{ color: "var(--p-100)" }}>$12,543</p>
+          <p className="text-5xl font-bold mt-2" style={{ color: "var(--p-text-1)" }}>$12,543</p>
         </div>
         <HeroBarChart />
       </div>
@@ -144,13 +148,13 @@ export function CardsTab() {
       {/* ── "Gain control" — s-accent bold bg ── */}
       <div
         className="rounded-2xl p-5 flex flex-col justify-between"
-        style={{ backgroundColor: "var(--s-accent, var(--p-700))", color: "white" }}
+        style={{ backgroundColor: "var(--s-accent, var(--p-500))" }}
       >
         <div>
-          <Target className="w-7 h-7 mb-2" style={{ color: "rgba(255,255,255,0.7)" }} />
-          <p className="text-xl font-bold leading-tight">Gain control of your finances</p>
+          <Target className="w-7 h-7 mb-2" style={{ color: "var(--p-text-2)" }} />
+          <p className="text-xl font-bold leading-tight" style={{ color: "var(--p-text-1)" }}>Gain control of your finances</p>
         </div>
-        <p className="text-4xl font-bold mt-3" style={{ color: "rgba(255,255,255,0.85)" }}>+18%</p>
+        <p className="text-4xl font-bold mt-3" style={{ color: "var(--p-text-1)" }}>+18%</p>
       </div>
 
       {/* ── Blog posts — 2 cols ── */}
@@ -177,17 +181,17 @@ export function CardsTab() {
       {/* ── "Create budgets" CTA — t-accent bold bg ── */}
       <div
         className="rounded-2xl p-5 flex flex-col justify-between"
-        style={{ backgroundColor: "var(--t-accent, var(--p-600))", color: "white" }}
+        style={{ backgroundColor: "var(--t-accent, var(--p-500))" }}
       >
         <div>
-          <Zap className="w-6 h-6 mb-2" style={{ color: "rgba(255,255,255,0.7)" }} />
-          <p className="text-sm font-bold">Create budgets</p>
-          <p className="text-[11px] mt-1" style={{ color: "rgba(255,255,255,0.7)" }}>Stay on track with smart limits</p>
+          <Zap className="w-6 h-6 mb-2" style={{ color: "var(--p-text-2)" }} />
+          <p className="text-sm font-bold" style={{ color: "var(--p-text-1)" }}>Create budgets</p>
+          <p className="text-[11px] mt-1" style={{ color: "var(--p-text-2)" }}>Stay on track with smart limits</p>
         </div>
         <Button
           size="sm"
           className="mt-3 w-full h-7 text-xs"
-          style={{ backgroundColor: "rgba(255,255,255,0.2)", color: "white", border: "1px solid rgba(255,255,255,0.3)" }}
+          style={{ backgroundColor: "color-mix(in srgb, var(--t-accent) 20%, transparent)", color: "var(--p-text-1)", border: "1px solid var(--p-border)" }}
         >
           Get started
         </Button>
@@ -241,7 +245,7 @@ export function CardsTab() {
         </div>
         <div
           className="flex-[0_0_35%] flex-shrink-0"
-          style={{ background: "linear-gradient(135deg, var(--t-400, var(--p-400)), var(--t-700, var(--p-700)))" }}
+          style={{ backgroundColor: "var(--t-accent, var(--p-500))" }}
         />
       </div>
 
@@ -267,22 +271,22 @@ export function CardsTab() {
         </div>
       </div>
 
-      {/* ── Product card — p-900 dark bg with gradient image ── */}
+      {/* ── Product card — surface-3 with gradient image ── */}
       <div
         className="rounded-2xl overflow-hidden flex flex-col"
-        style={{ backgroundColor: "var(--p-900)" }}
+        style={{ backgroundColor: "var(--p-surface-3)" }}
       >
-        <div className="flex-1 flex items-center justify-center p-4" style={{ background: "linear-gradient(180deg, var(--p-100), var(--p-200))" }}>
+        <div className="flex-1 flex items-center justify-center p-4" style={{ backgroundColor: "var(--p-surface-2)" }}>
           <div
             className="w-20 h-20 rounded-xl"
             style={{ background: "linear-gradient(135deg, var(--p-400), var(--s-accent, var(--p-600)))" }}
           />
         </div>
         <div className="p-4">
-          <p className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: "var(--p-400)" }}>MacBook Pro</p>
-          <p className="font-bold text-sm mt-0.5 text-white">14 inch</p>
+          <p className="text-[10px] uppercase tracking-widest font-semibold" style={{ color: "var(--p-accent)" }}>MacBook Pro</p>
+          <p className="font-bold text-sm mt-0.5" style={{ color: "var(--p-text-1)" }}>14 inch</p>
           <div className="flex items-center justify-between mt-3">
-            <p className="font-bold text-sm" style={{ color: "var(--p-300)" }}>$1,999</p>
+            <p className="font-bold text-sm" style={{ color: "var(--p-text-2)" }}>$1,999</p>
             <Button
               size="sm"
               className="h-7 text-xs gap-1"
