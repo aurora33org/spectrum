@@ -17,10 +17,47 @@ import { AlertsSection } from "@/components/preview/AlertsSection";
 import { HistoryPanel } from "@/components/history/HistoryPanel";
 import { usePalette } from "@/hooks/usePalette";
 import { useDarkMode } from "@/hooks/useDarkMode";
+import { generateScale } from "@/lib/color-engine";
+import { useState, useMemo } from "react";
+
+type ExtraColor = { id: string; hex: string; label: "Secondary" | "Tertiary" };
 
 export function PaletteApp() {
   const { hex, setHex, palette } = usePalette();
   const { isDark, toggle } = useDarkMode();
+  const [extraColors, setExtraColors] = useState<ExtraColor[]>([]);
+
+  const extraPalettes = useMemo(() => {
+    return extraColors.map((color) => ({
+      ...color,
+      palette: generateScale(color.hex),
+    }));
+  }, [extraColors]);
+
+  const addSecondaryColor = () => {
+    if (extraColors.length === 0) {
+      setExtraColors([{ id: "secondary", hex: "6366F1", label: "Secondary" }]);
+    }
+  };
+
+  const addTertiaryColor = () => {
+    if (extraColors.length === 1) {
+      setExtraColors([
+        extraColors[0],
+        { id: "tertiary", hex: "EC4899", label: "Tertiary" },
+      ]);
+    }
+  };
+
+  const removeExtraColor = (id: string) => {
+    setExtraColors((prev) => prev.filter((color) => color.id !== id));
+  };
+
+  const updateExtraColor = (id: string, hex: string) => {
+    setExtraColors((prev) =>
+      prev.map((color) => (color.id === id ? { ...color, hex } : color))
+    );
+  };
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -63,16 +100,50 @@ export function PaletteApp() {
                 Base color
               </h2>
               <ColorInput hex={hex} onChange={(h) => setHex(h)} />
+
+              {extraColors.length === 0 && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={addSecondaryColor}
+                  className="mt-3 w-full"
+                >
+                  + Add secondary color scale
+                </Button>
+              )}
             </section>
 
-            <Separator />
+            {extraColors.length > 0 && (
+              <section>
+                <ColorInput
+                  hex={extraColors[0].hex}
+                  onChange={(h) => updateExtraColor("secondary", h)}
+                  label="Secondary"
+                  onRemove={() => removeExtraColor("secondary")}
+                />
+                {extraColors.length === 1 && (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={addTertiaryColor}
+                    className="mt-3 w-full"
+                  >
+                    + Add tertiary color scale
+                  </Button>
+                )}
+              </section>
+            )}
 
-            <section>
-              <h2 className="text-[11px] font-semibold uppercase tracking-widest text-muted-foreground mb-3">
-                Scale — 11 stops
-              </h2>
-              <PaletteScale palette={palette} />
-            </section>
+            {extraColors.length > 1 && (
+              <section>
+                <ColorInput
+                  hex={extraColors[1].hex}
+                  onChange={(h) => updateExtraColor("tertiary", h)}
+                  label="Tertiary"
+                  onRemove={() => removeExtraColor("tertiary")}
+                />
+              </section>
+            )}
 
             <Separator />
 
@@ -89,6 +160,21 @@ export function PaletteApp() {
         <main className="flex-1 overflow-y-auto bg-muted/30">
           <PreviewProvider palette={palette} isDark={isDark}>
             <div className="p-6 flex flex-col gap-4 max-w-3xl mx-auto">
+              {/* Primary Scale — 11 stops */}
+              <div className="border rounded-lg p-4 bg-background">
+                <PaletteScale palette={palette} label="Scale — Primary" />
+              </div>
+
+              {/* Extra color scales */}
+              {extraPalettes.map((extra) => (
+                <div key={extra.id} className="border rounded-lg p-4 bg-background">
+                  <PaletteScale
+                    palette={extra.palette}
+                    label={`Scale — ${extra.label}`}
+                  />
+                </div>
+              ))}
+
               <GallerySection title="Stat Cards">
                 <StatsSection />
               </GallerySection>
